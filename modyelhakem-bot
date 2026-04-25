@@ -1,0 +1,50 @@
+import telebot
+from telebot import types
+
+# بياناتك اللي ثبتناها
+TOKEN = '8664816124:AAHahnhkbkKHue8UxV9kuhfrjKHxpakMWfc'
+ADMIN_USER = 'Mody_ggg' # اليوزر بدون @ للاستخدام في اللينكات
+
+bot = telebot.TeleBot(TOKEN)
+
+# ─── ⋆⋅☆⋅⋆ ─── ( البداية ) ─── ⋆⋅☆⋅⋆ ───
+@bot.message_handler(commands=['start'])
+def start(message):
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    
+    # أزرار الأقسام
+    item1 = types.InlineKeyboardButton("🎮 ¦ شِحن ألعابك", callback_data='games')
+    item2 = types.InlineKeyboardButton("📈 ¦ رِشق مُتابعين", callback_data='boost')
+    item3 = types.InlineKeyboardButton("💰 ¦ شِراء رصيد", callback_data='buy_credit')
+    item4 = types.InlineKeyboardButton("👤 ¦ حِسابي", callback_data='my_profile')
+    item5 = types.InlineKeyboardButton("🛡️ ¦ قِسم المطور", url=f"t.me/{ADMIN_USER}")
+    
+    markup.add(item1, item2, item3, item4)
+    markup.add(item5)
+
+    welcome_msg = (
+        f"✨ 𝑾𝒆𝒍𝒄𝒐𝒎𝒆 𝑻𝒐 𝑴𝒐𝒅𝒚 𝑩𝒐𝒕 ✨\n\n"
+        f"• أهلاً بيك يا « {message.from_user.first_name} » في عالم **مودي الحاكم** 👑\n"
+        f"• أقوى بوت لخدمات الرشق والشحن في مصر والوطن العربي ⚡\n\n"
+        f"• خش يا ابن قلبي اختار اللي محتاجه من تحت 👇"
+    )
+    bot.send_message(message.chat.id, welcome_msg, reply_markup=markup, parse_mode="Markdown")
+
+# ─── ⋆⋅☆⋅⋆ ─── ( قسم الرشق ) ─── ⋆⋅☆⋅⋆ ───
+@bot.callback_query_handler(func=lambda call: call.data == 'boost')
+def boost_section(call):
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    item1 = types.InlineKeyboardButton("👤 ¦ رشق فيسبوك", callback_data='fb')
+    item2 = types.InlineKeyboardButton("📸 ¦ رشق إنستجرام", callback_data='ig')
+    item3 = types.InlineKeyboardButton("🎥 ¦ رشق تيك توك", callback_data='tk')
+    back = types.InlineKeyboardButton("🔙 ¦ رجوع", callback_data='home')
+    
+    markup.add(item1, item2, item3, back)
+    
+    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, 
+                          text="✨ **قِسم الرشق - مودي الحاكم** ✨\n\n• نورت يا بطل، اختار المنصة اللي عايز ترشق عليها:", 
+                          reply_markup=markup, parse_mode="Markdown")
+
+# تشغيل البوت
+print("👑 بوت مودي الحاكم جاهز للاكتساح...")
+bot.polling(none_stop=True)
